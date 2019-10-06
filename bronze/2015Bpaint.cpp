@@ -11,7 +11,7 @@ int main() {
   ifs.open("paint.in");
   ifs >> a >> b >> c >> d;
 
-  // Because of W.L.O.G cases, change so that b is bigger than d (so that line 1 is always in the left side of line 2)
+  // Because of W.L.O.G, change so that b is bigger than d (so that line 1 is always in the left side of line 2)
   if (d<b) {
     // Switch the left smaller points
     int temp = a;
