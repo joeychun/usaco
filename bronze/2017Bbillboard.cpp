@@ -24,7 +24,7 @@ Length of Covered Area (when rectangles are overlapped)
 In other words, min(x2,X2) - max(x1,X1).
 This works both when the lengths of the rectangles are partly overlapping and completely overlapping.
 
-Length of Covered Area (when rectangles are overlapped)
+Length of Covered Area (when rectangles aren't overlapped)
 = 0
 
 Therefore, Length of Covered Area = max(min(x2,X2) - max(x1,X1), 0)
