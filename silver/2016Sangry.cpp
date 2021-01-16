@@ -3,71 +3,49 @@
 #include <vector>
 #include <algorithm>
 
-#define min(x,y) (((x)<(y))?(x):(y))
-#define max(x,y) (((x)<(y))?(y):(x))
-
 using namespace std;
+
+int n,k;
+vector<int> hays;
+
+int possible(int r) {
+  vector<int>::iterator it = hays.begin();
+  for (int i=0; i<k; ++i) {
+    if (it == hays.end()) break;
+    int val = (*it) + 2*r + 1;
+    it = lower_bound(hays.begin(), hays.end(), val);
+  }
+
+  return it == hays.end();
+}
 
 int main() {
   ifstream fin ("angry.in");
   ofstream fout ("angry.out");
+  ios::sync_with_stdio(false);
 
-  int n,k; // n: amount of haybales. k: amount of cows slingshoted
   fin >> n >> k;
-  long min_val = 1000000005, max_val = -1;
-
-  // Get input
-  long tmp;
-  vector<long> hay_location; // Holds all of the locations of haybales
-  long max_radius = -1; // The answer
+  int tmp;
   for (int i=0; i<n; ++i) {
     fin >> tmp;
-    // This is done to differentiate value 0 from array initial value 0
-    hay_location.push_back(tmp+1); // No difference if added-by-one value is put in
-
-    // Update minimum, maximum value
-    min_val = min(min_val, tmp+1);
-    max_val = max(max_val, tmp+1);
+    hays.push_back(tmp);
   }
+  sort(hays.begin(), hays.end());
 
-  // Go through all of the locations, divide them into k groups
-  long min_hay[15] = { 0 }; // Holds the min hay location among its group (k groups in total)
-  long max_hay[15] = { 0 }; // Holds the max hay location among its group (k groups in total)
-  for (vector<long>::iterator it = hay_location.begin(); it != hay_location.end(); ++it) {
-    for (int n=0; n<k; ++n) { // Internal dividing points
-      // Dividing points: (min_val)x(a) + (max_val)x(k-a)
-      //                  -------------------------------
-      //                                k
-      double div1 = (min_val*n + max_val*(k-n))/(double)k;
-      double div2 = (min_val*(n+1) + max_val*(k-n-1))/(double)k;
-      if (n==0) div1 += 1; // To include maximum hay location in a group as well
-      if ((div2 <= (*it)) && ((*it) < div1)) {
-        /* cout << n << ": " << div1 << ", " << div2 << "\n" << "value => " << (*it) << "\n\n"; */
-        // Check if (*it) can be part of min_hay[n] or max_hay[n]
-        // Before that, check if min_hay[n] and max_hay[n] exists
-        if (min_hay[n] == 0) {
-          min_hay[n] = (*it);
-        } else {
-          min_hay[n] = min(min_hay[n], (*it));
-        }
-
-        if (max_hay[n] == 0) {
-          max_hay[n] = (*it);
-        } else {
-          max_hay[n] = max(max_hay[n], (*it));
-        }
-      }
+  int start = 1, end = (1e9) + 5;
+  int ans;
+  while (start <= end) {
+    int mid = (start+end)/2;
+    if (possible(mid)) {
+      // Possible, now try smaller radius as well
+      ans = mid;
+      end = mid - 1;
+    } else {
+      // Doesn't work, so try bigger radius
+      start = mid + 1;
     }
   }
 
-  // Radius Calculation
-  for (int i=0; i<k; ++i) {
-    long diff = max_hay[i] - min_hay[i];
-    long radius = (diff+1)/2;
-    max_radius = max(max_radius, radius);
-  }
-
-  fout << max_radius;
-
+  fout << ans;
   return 0;
 }
